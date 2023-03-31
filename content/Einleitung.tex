@@ -1,0 +1,30 @@
+\section{Einleitung}
+
+\subsection{Projektumfeld}
+
+Die \ac{FA}\footnote{\textbf{Anmerkung:} Wörter aus dem Glossar, zu sehen in \vref{sec:glossar}, sind zur besseren Übersicht kursiv gesetzt. Abkürzungen sind im Abkürzungsverzeichnis in \vref{sec:abkuerzungsverzeichnis} zu finden. Der Projekttitel \enquote{PaMesAn} ist eine Kurzschreibweise von \enquote{Paket-Messungs-Anlage}.}
+ist eines der größten deutschen E-Commerce-Unternehmen und eine der führenden Online-Druckereien Europas im B2B-Bereich. 2002 wurde diese als Ein-Mann-Unternehmen gegründet und beschäftigt mittlerweile mehr als 2000 \ac{MA}. Das Produktsortiment umfasst drei Millionen Produkte und wird stetig erweitert. Dazu gehören zum Beispiel Flyer, Visitenkarten, Kalender, Magazine und viele weitere Artikel. \ac{FA} betreibt den Onlineshop und ist für die Datenannahme, Bearbeitung der Kundenaufträge und das Erstellen von Sammelbögen zuständig. Ihre Tochtergesellschaft, \ac{FAIP}, übernimmt neben dem Drucken im \textit{\gls{Sammeldruckverfahren}} auch die Weiterverarbeitung, Montage, Konfektionierung und die Vorbereitung für den Versand. Sie ist mit acht Standorten in Deutschland vertreten und beschäftigt ca. 1200 \ac{MA}. Das Kerngeschäft der IT-Abteilung ist hierbei das Aufarbeiten der Druckdaten von \ac{FA}, damit diese den \acp{MA} in der Produktion und den Druckmaschinen zur Verfügung gestellt werden können. Hier absolviert der Autor seine Ausbildung.
+
+
+\subsection{Projektbeschreibung}
+
+Durch die Änderung des \textit{\glspl{Verpackungsgesetz}} gibt es gesetzliche Anforderungen zur Erfassung und Meldung verwendeter Verpackungen. Die bisher verwendete Methode ist durch unterschiedliche Berechnungen und Ausnahmen an den verschiedenen Standorten nicht mehr praxistauglich. Um von den Erfahrungswerten der verpackenden \acp{MA} zu profitieren, sollen die Pakete nach dem Verpacken und kurz vor dem Versand gescannt und die Abmessungen erfasst werden. Die erfassten Pakete und deren Versandlabel werden in einer Datenbank abgespeichert. So können aus diesen gesammelten Daten einheitliche Verpackungsrichtlinien geschaffen und die Datenmeldung bzgl. des Verpackungsgesetzes erleichtert werden.
+
+Durch die Umsetzung des Projektes können so die Daten in Zukunft zuverlässiger erfasst und ausgewertet werden. Das automatische Erfassen reduziert einen großen Teil des Wartungsaufwandes und es wird sichergestellt, dass die erfassten Verpackungen aktuell und produktionsnah sind. Dadurch ist es möglich, dem neuen Verpackungsgesetz im vollen Maße gerecht zu werden. Weitere Vorteile sind die Einsparung von Kosten, da die genaue Menge der verwendeten Verpackungen bestimmbar wird; die Qualitätskontrolle verbessert sich, weil eventuelle Schäden sofort nachvollzogen werden können; zusätzliche Daten über Verpackungsgrößen und Zielorte können erhoben werden.
+
+
+zu bestimmen, wodurch Kosten gespart werden können. Auch kann so eine bessere Qualitätskontrolle gewährleistet werden, da eventuelle Schäden besser nachvollzogen werden können. Ebenso kann ausgewertet werden, welche Verpackungsgrößen in welche Länder geliefert werden.
+
+
+\subsection{Projektschnittstellen}
+
+Die einzelnen Softwarekomponenten des Projekts kommunizieren mittels \textit{\gls{RabbitMQ}}, einer Open Source Message Broker Software, miteinander. Diese Software ist als \textit{\gls{HA-Cluster}} an jedem Standort bereits vorhanden.
+
+Ebenso werden die standortspezifischen Daten über eine bereits vorhandene Stammdatenpflege erstellt und aktuell gehalten. Diese werden genutzt, um die Berechnung der Versandverpackungen zu ermitteln.
+
+Ein Entwurf des Sensorträgers wurde anhand der in \vref{ssec:sollAnalyse} beschriebenen Anforderungen erstellt. Die endgültige Konstruktion, das Beschaffen der Materialien sowie der Aufbau wurde unter kontinuierlicher Rücksprache von den Haustechnikern des Standorts Kesselsdorf durchgeführt.
+
+
+\subsection{Projektabgrenzung}
+
+Das Projekt soll als Konzept für alle anderen Standorte erstellt und umgesetzt werden. Damit sollen die Abmessungen der Pakete erfasst und einer Liefer- oder Sendungsnummer zugewiesen werden. Nicht Teil des Projekts ist es, die gemessenen Abmessungen mit den bekannten Abmessungen der zur Verfügung stehenden Verpackungen und bekannten Bestellungen zu vergleichen. Auch das Aufsetzen und Anlegen der Datenbank und des Datenbankbenutzers sowie das Einrichten des Windowsrechners sind nicht Teil des Projekts. Auch der \textit{\gls{RabbitMQ}}-Service und \textit{\gls{Docker Swarm}} zählen zu den Ressourcen, die bereits vorhanden waren oder zur Verfügung gestellt wurden.

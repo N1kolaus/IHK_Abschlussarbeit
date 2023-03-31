@@ -1,0 +1,120 @@
+\section{Implementierungsphase}
+
+
+\subsection{Erstellung der Datenbanktabellen}
+
+Nach der Analyse wurde das in \vref{{appendix:fig:erm}} zu sehende Tabellenmodell erstellt und auf Basis dessen die daraus resultierenden Tabellen. Als Beispiel für die Erstellung einer Tabelle ist das passende SQL-Skript für die RawData-Tabelle in \vref{{appendix:lst:sql_raw}} zu sehen.
+
+
+\subsection{Erstellen der RabbitMQ Exchanges}
+
+Um die Kommunikation zwischen den Services zu ermöglichen, wurden zwei \textit{\gls{RabbitMQ}}-Exchanges erstellt. Hier können Services als Publisher Nachrichten in eine oder mehrere Queues einreihen und Subscriber können diese Nachrichten dann abrufen. Die Entscheidung fiel jeweils auf  einen Fanout-Exchange, einen für die unverarbeiteten und einen für die verarbeiteten Daten. Ein Fanout-Exchange verteilt die eingegangenen Nachrichten auf alle ihm bekannten Queues. Somit kann auch zukünftig sichergestellt werden, dass Daten von anderen Services abgerufen werden können. Für beide Exchanges wurde jeweils für den Publisher und den Subscriber eine Authentifikation in Form von Nutzername und Passwort angelegt.
+
+
+\subsection{Erstellen des Datenspeicherservice}
+
+
+\subsubsection{Verwendete Pakete}
+
+Für die Anbindung der Anwendung an \textit{\gls{RabbitMQ}} wurde das intern entwickelte und bereitgestellte NuGet-Paket FAIP.LIB.RMQ verwendet. Zur Anbindung der SQL-Datenbank (Microsoft.EntityFrameworkCore.SqlServer) und zum Erstellen der Modelle aus den Tabellen der Datenbank (Microsoft.EntityFrameworkCore.Tools) wurde das NuGet-Paket Entity Framework Core angewandt. Zudem wurde für das Loggen von wichtigen Informationen und Fehlermeldungen das NuGet-Paket NLog installiert.
+
+
+\subsubsection{Datenbankanbindung}
+
+Die Datenbankanbindung erfolgte mit Hilfe der Microsoft.EntityFrameworkCore.Tools. Diese bieten bei der Verwendung des \enquote{Database first}-Ansatzes die Möglichkeit, die Datenbanktabellen als Modelle in die Anwendung zu laden. Die beiden Modelle für RawData und ProcessedData sowie der DatabaseContext, der die Verbindungsschnittstelle zwischen Code und Datenbank bildet, wurde mit dem in \vref{lst:ef_core_scaffold} zu sehenden Befehl erstellt.
+
+\begin{lstlisting}[style=bash-style,
+    caption={Portierungsbefehl der Datenbanktabellen zu C\#-Modellen},
+    breaklines=true,
+    label={lst:ef_core_scaffold}]
+    Scaffold-DbContext "Data Source=sql-mar-01.druckhaus.local; Initial Catalog=PAMESAN; persist security info=True; user id=pamesan-rw; password=******" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DatabaseContext -Tables RawData, ProcessedData
+\end{lstlisting}
+
+
+\subsection{Platzierung der Sensoren und der Webcam}\label{ssec:platzierung_sensoren}
+
+Zum Abmessen des Pakets wurden drei Lasersensoren an item-Aluprofilen angebracht, als 3D-Zeichnung in \vref{appendix:fig:sensor_traeger_3d} und als fertiger Sensorträger in \vref{appendix:fig:sensor_traeger_fertig} zu sehen.
+Bekannt ist der Abstand zwischen Förderband und dem nach unten messenden Sensors. Aus der Differenz zwischen diesem und dem gemessenen Abstand zwischen Paket und Sensor wird die Höhe bestimmt. Ebenso bekannt ist der Abstand zwischen linkem und rechtem Sensor. Aus der Differenz zwischen diesem und der Summe der beiden gemessenen Abstände zwischen Paket und Sensoren wird die Breite bestimmt.
+Um die Länge $l_P$ des Pakets bestimmen zu können, muss die Bandgeschwindigkeit $v_B$ berechnet werden.
+Diese kann je nach Auslastung des Förderbandes und der Produktion unterschiedlich sein.
+Die beiden seitlich angebrachten Sensoren, $s1$ und $s2$, sind mit einem bekannten Abstand $a$ voneinander versetzt angebracht.
+Es wird jeweils der erste und letzte Zeitpunkt, $t1$ und $t2$, erfasst, an dem ein Sensor einen Abstandswert gemessen hat.
+Aus dem bekannten Abstand zwischen linkem und rechtem Sensor $a$ und der Differenz der Erfassungszeitpunkte Zeit kann nun die Bandgeschwindigkeit $v_B$, siehe \vref{eq:bandgeschwindigkeit}, berechnet werden. Mit dieser Geschwindigkeit $v_B$ und der Differenz zwischen dem ersten und dem letzten Erfassungszeitpunkt eines Sensors, $s1_{t2}$ und $s1_{t1}$, kann nun die Länge $l_P$ berechnet werden, siehe \vref{eq:laenge}.
+
+\begin{align}
+  v_B & = \frac{a}{s2_{t1} - s1_{t1}} \label{eq:bandgeschwindigkeit}  \\
+  l_P & = \left( s1_{t2} - s1_{t1} \right) \cdot v  \label{eq:laenge}
+\end{align}
+
+Die Webcam wird oberhalb des Förderbands um \SI{10}{\centi\metre} nach hinten versetzt montiert, um ein vollständiges und gerades Bild vom Paket zu erhalten.
+
+
+\subsection{Erstellen der Sensordaten-Abfrage-Anwendung}
+
+
+\subsubsection{Verwendete Pakete}
+
+Zum Auslesen der Sensordaten mittels des Arduino-Einplatinencomputers wurde die SoftwareSerial-Bibliothek installiert, die das Auslesen von verschiedenen Pins auf dem Board ermöglicht. Neben den eingebauten Python-Modulen wurde zum Erfassen der Sensor- und Bilddaten opencv-python, die Implementierung von \textit{\gls{OpenCV}} in Python und pyserial verwendet. Zudem wurde das Paket pika verwendet, um die Kommunikation mit \textit{\gls{RabbitMQ}} zu ermöglichen.
+
+
+\subsubsection[Implementierung der Ausleselogik]{Implementierung der Ausleselogik der Sensor- und Bilddaten}
+
+Die drei Lasersensoren sind mit einem Arduino verbunden, zu sehen in \vref{appendix:fig:arduino}. Für das Auslesen von mehreren Benewake TF MINI PLUS-Sensoren stellt der Hersteller ein Skript zur Verfügung, das für zwei Sensoren ausgelegt ist. \autocite{tfmini-arduino} Dieses Skript wurde so angepasst, dass es mit drei Sensoren arbeiten kann und die jeweils gemessenen Abstände sowie einen Millisekunden-Zeitstempel über die serielle Schnittstelle ausgibt.
+
+Das Python-Programm liest beim Starten zuerst die Umgebungsvariablen aus, um Baudrate und ComPort des Arduinos sowie den Standort und die Verbindungsparameter zu \textit{\gls{RabbitMQ}} zu ermitteln. Danach wird die Verbindung mit dem Arduino über die serielle Schnittstelle initialisiert. Nach erfolgreichem Initialisieren werden aus den ersten zehn gemessenen Abständen jedes Lasersensors der jeweilige Maximalwert und abzüglich einer Toleranz der jeweilige Schwellwert ermittelt. Danach ist das Auslesen, die Datenverarbeitung und die Kommunikation mit \textit{\gls{RabbitMQ}} in je einen dedizierten Prozess ausgelagert. Diese Prozesse sind mit Queues verbunden, so dass ein Datenaustausch stattfinden kann.
+
+Der Auslese-Prozess liest den Datenstring der seriellen Schnittstelle aus und wandelt diesen zu einem Dictionary um. Fällt der Abstandsmesswert des ersten seitlichen Sensors unter den zuvor ermittelten Schwellwert, wird das zugehörige Dictionary und alle kommenden Messwerte als Liste gepflegt, bis der Schwellwert wieder überschritten wird. In diesem Fall wird der Datenverarbeitungsprozess über die entsprechende Queue informiert, ein Bild zwischenzuspeichern. Sind alle Schwellwerte der Sensoren wieder überschritten, wird die Liste über die für die Datenverarbeitung vorgesehene Queue an den Datenverarbeitungsprozess übergeben.
+
+Der Datenverarbeitungsprozess verarbeitet mit Hilfe von opencv-python den Kamerastream und speichert das aktuelle Bild zwischen, wenn die entsprechende Anweisung durch die Queue erfolgt. Befindet sich eine Liste mit Werten in der Queue, wird für jeden Sensor der jeweils am häufigsten auftretende Wert ermittelt, sowie dessen erstes und letztes Auftreten inklusive des passenden Zeitstempels. Diese Werte werden gemeinsam mit dem als base64-String kodierten Bild an den Kommunikationsprozess weitergereicht.
+
+Dieser erstellt aus den übertragenen Werten, dem Bild, dem aus den Umgebungsvariablen ausgelesenen Standort, dem aktuellen Zeitpunkt und einer generierten \ac{UUID} ein JSON-Objekt, das mit Hilfe von pika an den RawData-Exchange versendet wird.
+
+
+\subsection{Erstellen des Datenverarbeitungsservice}
+
+
+\subsubsection{Verwendete Pakete}
+
+Auch im Datenverarbeitungsservice wurde pika zur Kommunikation mit \textit{\gls{RabbitMQ}} sowie opencv-python, numpy und pyzbar zum Erkennen und Auslesen der Barcodes verwendet. Als Objektdetektor zum Erkennen der Versandverpackungen wurde ein durch \textit{\gls{YOLOv7}} bereitgestelltes und mit eigenen Bildern trainierten \ac{FCNN} verwendet. Für das Abfragen der Datenbank wurde SQLModel eingesetzt. Zum labeln der Bilder für die eigenen Trainingsdaten wurde labelImg verwendet, ein Werkzeug für grafische Bildanmerkungen. \autocite{labelimg}
+
+
+\subsubsection{Zusammenspiel der einzelnen Komponenten}
+
+Der Kommunikationsdienst arbeitet als Consumer die eingegangenen Nachrichten der Queue des RawData-Exchanges ab. Diese Daten werden dann an den Erkennungsprozess für Versandverpackungen weitergeleitet.
+
+Dieser erkennt das Paket im Bild, berechnet anhand dieser Daten ein Rechteck um das Paket, schneidet das Bild entsprechend zu und leitet dieses an den Label-Auslese-Prozess weiter. Hier wird der Barcode im Label auf dem Paket erkannt und ausgelesen. Diese Daten werden dann mit der berechneten Paketgröße zusammengeführt und über den Kommunikationsprozess an den ProcessedData-Exchange gesendet.
+
+
+\subsubsection{Erkennung der Versandverpackung}\label{ssec:erkennung_versandverpackung}
+
+Ursprünglich sollte die Erkennung der Versandverpackungen mittels opencv-python erfolgen. Im Laufe der Implementierung wurde allerdings festgestellt, dass die Spiegelung der Metallrollen des Rollenförderbands eine verlässliche Erkennung des Pakets mittels opencv-python unmöglich machen. Abhilfe hat in diesem Fall \textit{\gls{YOLOv7}} geschaffen. \textit{\gls{YOLOv7}}, ein \acl{FCNN}, ist ein \textit{\gls{Deep Learning}}-Objektdetektor, der Objekte wie Menschen, Autos, Katzen und viele weitere durch \textit{\gls{Semantische Segmentierung}} erkennen kann. Durch die Implementierung sogenannter \ac{BoF}, Methoden, die die Performance eines Modells erhöhen, ohne die Trainingszeit zu verlängern, erlaubt \textit{\gls{YOLOv7}} das Trainieren eines eigenen Modells mit einem relativ kleinen Datensatz. \autocite{yolov7} Das Trainieren des eigenen Modells wird mit Hilfe von \textit{\gls{Transfer Learning}} ermöglicht, wobei ein bereits trainiertes Modell verwendet und mittels eigener Daten angepasst wird. \textit{\gls{Transfer Learning}} erlaubt eine schnellere Erstellung, eine gute Modellqualität und weniger Ressourceneinsatz. \autocite{wuttke_transfer}
+
+Für das eigene Modell wurden 100 Fotos von Versandverpackungen aufgenommen und mit labelImg gelabelt. Ein Beispiel für den Label-Prozess ist in \vref{appendix:fig:labelImg} zu sehen. 70 der Bilder und Label wurden als Trainingsdaten verwendet, wobei die restlichen 30 Bilder als Daten zur Validierung dienten. Mit der auf GitHub veröffentlichten Implementierung von \textit{\gls{YOLOv7}}, den 70 Trainingsbildern und der in \vref{lst:runYolov7} zu sehenden Anweisung wurde das Training des eigenen Modells gestartet.
+
+\begin{lstlisting}[style=bash-style,
+  caption={Befehl zum Trainieren des Modells},
+  breaklines=true,
+  label={lst:runYolov7}]
+  python train.py --device 0 --batch-size 16 --epochs 100 --img 640 640 --data data/custom_data.yaml --hyp data/hyp.scratch.custom.yaml --cfg cfg/training/yolov7_custom.yaml --weights yolov7.pt --name yolo7-custom
+\end{lstlisting}
+
+Die durch das Training erstellten Gewichte (weights) erlauben das Erkennen von den zuvor ausgewählten und gelabelten Objekten ähnlicher Art. Ein Beispiel für die Ausführung ist in \vref{appendix:fig:yoloDetect} zu sehen.
+
+Mit dem Aufruf der Detection-Klasse werden die Gewichte geladen, das Modell vorbereitet sowie alle benötigten Labels (in diesem Fall nur eins) geladen. Wird die detect-Methode mit einem Bild aufgerufen, wird versucht, ein Paket in diesem Bild zu erkennen. Bei Erfolg wird ein Rechteck um das Objekt gezeichnet sowie das Label und die Zuversichtlichkeit an dieses geschrieben. Dieses Bild wird zum Speichern in der Datenbank behalten. Für die Weiterverarbeitung wie dem Erkennen und Erfassen des Barcodes auf dem Label, wird das Bild an dem erkannten Rechteck zugeschnitten und an die BarcodeDetection-Klasse weitergeleitet. Wird kein Paket im Bild erkannt, bricht die Methode den Erkennungsprozess frühzeitig ab, es wird ein Null-Wert als Bild dem Kommunikationsprozess übergeben und das Ereignis wird geloggt.
+
+
+\subsubsection{Auslesen des Versandlabels}
+
+Das Auslesen des Versandlabels erfolgt mit opencv-python und numpy. Dazu wird das Bild in ein Graustufen-Bild umgewandelt und mit diversen Filtern bearbeitet. Da ein Barcode typischerweise schwarz-weiß ist, werden so beispielsweise nur hohe und niedrige Schwellwerte beibehalten. Danach wird nach Konturen gesucht, die einem Barcode ähneln. Mittels eines Blur-Filters wird das Rauschen im Bild entfernt. Durch mehrfache Erosion kann ein großes Rechteck an der Stelle ausgemacht werden, an der ein Barcode vorhanden ist. Diese Stelle im Bild wird als Rechteck markiert, zu sehen in \vref{appendix:fig:foundLabel}. Sind mehrere Rechtecke vorhanden, wird das mit der größten Kontur ausgewählt. Anhand der Koordinaten des Rechtecks wird ein Bildausschnitt erstellt, zu sehen in \vref{appendix:fig:barcode}, der nun mittels pyzbar ausgelesen werden kann.
+
+
+\subsubsection{Berechnung der Paketgröße}
+
+Zum Berechnen der Paketgröße werden jede Stunde die standortspezifischen Daten aus der Datenbank abgefragt. In diesen ist die SiteId, die Distanz zwischen den beiden gegenüberliegenden Sensoren, die Distanz zwischen dem auf das Band schauende Sensor und dem Förderband, der horizontale Abstand zwischen den beiden gegenüberliegenden Sensoren sowie eine Beschreibung enthalten. Dazu wurde mit Hilfe von SQLModel eine Tabellenklasse erstellt, die die Datenbanktabelle widerspiegelt, sowie eine Methode, die die Verbindung zur Datenbank herstellt.
+
+Die Berechnung erfolgt wie in \vref{ssec:platzierung_sensoren} beschrieben. Je eine Methode ist für die Berechnung für Länge, Breite und Höhe zuständig.
+
+
+\subsection{Bestückung des Sensorträgers}
+
+Nachdem die Haustechnik den Sensorträger ähnlich zu der in \vref{{appendix:pdf:sensor_traeger_skizze}} zu sehenden Skizze gebaut hatte, musste dieser mit Sensoren, Kamera, Arduino und Windowsrechner bestückt sowie alle Kabel ordnungsgemäß verlegt werden. Dazu wurden die Sensoren mit 4-adrig verschraubbaren Sensorkabeln versehen und in die 3D-gedruckten Sensorhalterungen gesteckt. Mittels item-Verbindungsstücken wurden Sensoren, Kamera, Rechnerkäfig und ABS Kunststoff Gehäuse an den item-Aluprofilen befestigt. Der Rechner wurde in den Rechnerkäfig, der Arduino in dem ABS Kunststoff Gehäuse angebracht. Die Kabel wurden im Kabelkanal ordentlich verlegt, die Kamera mit dem Rechner verbunden und die Sensoren mit dem am Arduino angebrachten Female-Steckern verschraubt.

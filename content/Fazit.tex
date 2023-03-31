@@ -1,0 +1,39 @@
+\section{Fazit}
+
+\subsection{Soll-/Ist-Vergleich}
+
+Das Projekt wurde zur Zufriedenheit des Versands und der IT erfolgreich abgeschlossen. Keine Probleme wurden durch das Umschwenken auf eine \textit{\gls{Microservices-Architektur}} kurz vor Projektbeginn verursacht. Während der Planung, Analyse und Umsetzung traten bis auf das Problem mit der Bilderkennung keine größeren oder unerwarteten Probleme auf. Dieses konnte jedoch durch den Einsatz von \textit{\gls{YOLOv7}} gelöst werden, was allerdings einen verschobenen Zeitplan zur Folge hatte. Deshalb musste der Schreibtischtest gestrichen und die Abnahme verkürzt werden, um die Vorgabe von \SI{80}{Stunden} für die Projektrealisierung zu erfüllen. Der dadurch entstandene Zeitablauf ist in \vref{tab:zeitablauf_real} zu sehen.
+
+\begin{table}[htbp]
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \caption{Abschließender Zeitablauf}
+  \begin{tabular}{lrrr}
+    Projektphase         & Geplant        & Tatsächlich    & Differenz      \\
+    Analyse              & \SI{10}{\hour} & \SI{10}{\hour} &                \\
+    Entwurf              & \SI{8}{\hour}  & \SI{8}{\hour}  &                \\
+    Implementierung      & \SI{39}{\hour} & \SI{46}{\hour} & \SI{+7}{\hour} \\
+    Test                 & \SI{5}{\hour}  & \SI{2}{\hour}  & \SI{-3}{\hour} \\
+    Einführung / Abnahme & \SI{6}{\hour}  & \SI{2}{\hour}  & \SI{-4}{\hour} \\
+    Dokumentation        & \SI{12}{\hour} & \SI{12}{\hour}                  \\
+  \end{tabular}
+  \label{tab:zeitablauf_real}
+\end{table}
+
+Fünf Tage nach Abnahme hat die eingesetzte Webcam nicht mehr funktioniert. Eine genaue Ursache ist nicht bekannt, vermutlich hat die andauernde Nutzung zu einer Überbelastung geführt. Das weitere Vorgehen ist in \vref{{ssec:ausblick}} beschrieben.
+
+
+\subsection{Lessons Learned}
+
+Im laufe des Projektes sind drei große Punkte aufgefallen, welche für die Zukunft mitgenommen werden können:
+
+\begin{description}
+  \item[Pufferzeit] Für das nächste Projekt sollten etwa ein bis zwei Prozent der Gesamtzeit als Pufferzeit eingeplant werden, um auf Probleme besser reagieren zu können.
+  \item[\textit{\gls{YOLOv7}}] Als Objektdetektor hat sich \textit{\gls{YOLOv7}} als praktisch und leicht einsetzbar erwiesen. Auch mit geringen Vorkenntnissen kann dieser mit eigenen Objekten trainiert und eingesetzt werden.
+  \item[Webcam] Es hat sich herausgestellt, dass die andauernde Nutzung einer Webcam kein guter Ersatz für eine Industriekamera ist. In Zukunft wird hier auf entsprechende Modelle gesetzt.
+\end{description}
+
+
+\subsection{Ausblick}\label{ssec:ausblick}
+
+Als Konzept hat dieses Projekt gezeigt, dass das automatische Erkennen und Ausmessen der Kartonagen zur Erfüllung der Novelle des Verpackungsgesetzes umsetzbar ist. Die gesammelten Daten müssen allerdings noch aufbereitet, ausgewertet und für das Weiterreichen angepasst werden. Der Sensorträger soll wie in diesem Projekt realisiert an allen anderen Standorten auch aufgebaut und angeschlossen werden. Lediglich die Webcam wird durch den in \vref{ssec:analyse:hardware} erwähnten KEYENCE SR-X100 AI-Codeleser ersetzt. In diesem Fall kann auch die Erfassung des Labels und damit das Auslesen des Barcodes ersetzt werden. Zudem soll der Abteilung für Qualitätsmanagement der Zugriff auf die Daten ermöglicht werden, was durch eine Webanwendung gelöst werden soll. Das sind allerdings Erweiterungen und Anpassungen für zukünftige Projekte.

@@ -1,0 +1,87 @@
+\section{Analyse}
+
+
+\subsection{Ist-Analyse}
+
+Bisher wird die Paketgröße und -anzahl für jeden Auftrag individuell bei Eingang der Daten berechnet. Berücksichtigt werden dabei viele verschiedene Faktoren wie beispielsweise Auflage, Stärke, Größe und Gewicht des Papiers und des Kartons, das Maximalgewicht des Paketdienstleisters und ob ein Rollenkern verwendet werden kann. Diese Berechnung ist auch für jeden Standort unterschiedlich, da nicht alle Kartonagen in jedem Werk verwendet werden. All diese Informationen werden in MSSQL-Datenbanken gespeichert und müssen regelmäßig manuell gepflegt werden. Zudem muss auf Sonderfälle für verschiedene Produkte geachtet werden. Durch die Änderung des Verpackungsgesetzes gibt es nun zusätzliche gesetzliche Anforderungen an die Erfassung und Meldung verwendeter Verpackungen, was aktuell durch die unterschiedlichen Berechnungen und Ausnahmen an den Standorten nur schwer abbildbar oder planbar ist.
+
+
+\subsection{Soll-Analyse}\label{ssec:sollAnalyse}
+
+Ein Paket soll automatisch auf der Versandstraße erkannt, dessen Abmessungen erfasst und das Versandlabel erkannt werden. Diese Daten sollen mit einem Bild des Pakets persistent gespeichert werden. Die Anforderungen sollen mit Hilfe einer \textit{\gls{Microservices-Architektur}} umgesetzt werden.
+
+
+\subsection{\enquote{Make or buy}-Analyse}
+
+Das Projekt hat keine Gewinnabsicht, sondern dient der Erfüllung der Richtlinien des Verpackungsgesetzes. Deshalb wird auf eine Amortisationsrechnung verzichtet und nur eine \enquote{Make or buy}-Analyse durchgeführt.
+
+Auf Anfragen wurde von der Elektro Löther GmbH das in \vref{appendix:fig:fa_loether_angebot} zu sehende Angebot erstellt. In diesem rechnet die Firma Löther mit etwa \SI{25000}{€} pro Standort für Kamerahardware, Elektrik/Mechanik, Software und Inbetriebnahme.
+
+Die Kosten einer Eigenentwicklung mit der in \vref{ssec:analyse:hardware} ausgewählten Hardware sind in \vref{tab:kostenverteilungHardware} zu sehen. Die  Personalkosten sind in \vref{tab:kostenverteilungPersonal} dargestellt. Der Stundenlohn des Personals wurde von der Personalabteilung als Orientierungswert so kommuniziert. Zu diesem kommen die Ressourcenkosten, zu denen zum Beispiel Strom und Miete der Büros zählen, wofür ein Pauschalbetrag von \SI{15}{€} pro Stunde berechnet wird.
+
+
+\begin{table}[htbp]
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \caption{Kostenverteilung Hardware}
+  \begin{tabular}{lrrr}
+    Hardware                    & Stück / Meter & Kosten pro Stück / Meter & Gesamt         \\
+    ARCELI Shield Board Kit     & 1             & \SI{17.99}{€}            & \SI{17.99}{€}  \\
+    AZDelivery 5 x Mega 2560 R3 & 1             & \SI{74.99}{€}            & \SI{14.99}{€}  \\
+    Benewake TF MINI PLUS       & 3             & \SI{61.80}{€}            & \SI{182.40}{€} \\
+    Microsoft Lifecam Studio    & 1             & \SI{42.99}{€}            & \SI{42.99}{€}  \\
+    item-Systemprofile          & 4             & \SI{7.38}{€}             & \SI{29.52}{€}  \\
+    item-Verbindungsstücke      & 24            & \SI{8.00}{€}             & \SI{192.00}{€} \\
+    item-Füße                   & 2             & \SI{24.00}{€}            & \SI{48.00}{€}  \\
+    Dell Wyse 5070 Thin Client  & 1             & \SI{450.00}{€}           & \SI{450.00}{€} \\
+    \hline
+    Gesamtkosten                &               &                          & \SI{977.89}{€}
+  \end{tabular}
+  \label{tab:kostenverteilungHardware}
+\end{table}
+
+
+\begin{table}[htbp]
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \caption{Kostenverteilung Personal}
+  \begin{tabular}{lrrr}
+    Personal       & Zeit in Stunden & Kosten pro Stunde              & Gesamt          \\
+    Auszubildender & 80              & \SI{6.00}{€} + \SI{15.00}{€}   & \SI{1680.00}{€} \\
+    Teamleitung    & 2               & \SI{31.50}{€}  + \SI{15.00}{€} & \SI{93.00}{€}   \\
+    Teammitglied   & 2               & \SI{21.50}{€}  + \SI{15.00}{€} & \SI{73.00}{€}   \\
+    Haustechnik    & 8               & \SI{19.00}{€}  + \SI{15.00}{€} & \SI{272.00}{€}  \\
+    \hline
+    Gesamtkosten   &                 &                                & \SI{2118.00}{€}
+  \end{tabular}
+  \label{tab:kostenverteilungPersonal}
+\end{table}
+
+Die Summe der Gesamtkosten aus \vref{tab:kostenverteilungHardware} und \vref{tab:kostenverteilungPersonal} ergibt bei einer Eigenentwicklung \SI{3095.89}{€}, was etwa ein Zehntel der von der Firma Löther geschätzten Kosten für einen Standort sind. Für jeden weiteren Standort fallen im Fall der Eigenentwicklung nur die Kosten für die Hardware und die Haustechniker an. Aufgrund dieses großen Unterschieds und der daraus entstehenden Einsparung von mehr als \SI{20000}{€} pro Standort wurde die Eigenentwicklung präferiert.
+
+
+\subsection{Analyse der benötigten Hardware}\label{ssec:analyse:hardware}
+
+Um die Abmessungen der Verpackungen erkennen zu können, werden Sensoren benötigt. Es stehen drei verschiedene Abstandssensoren zur Verfügung, die im Folgenden auf ihre Nutzbarkeit überprüft werden. Von den Sensoren werden im Abstand von fünf bis \SI{55}{\centi\metre} alle fünf Zentimeter \SI{60}{\second} lang die Messwerte aufgezeichnet. Aus diesen Messreihen wird die Tauglichkeit der Sensoren entnommen.
+
+\begin{description}
+  \item[\ac{IR}-Sensor] Die Auswertung für diesen Sensor ist in \vref{appendix:fig:irSensorAuswertung} zu sehen. Das Driften der Messwerte ist ein Ausschlusskriterium, weswegen der Sensor nicht berücksichtigt werden kann.
+  \item[Ultraschallsensor] Die Auswertung für diesen Sensor ist in \vref{appendix:fig:ultraSensorAuswertung} zu sehen. Das \textit{\gls{Jittern}} der Messwerte ist ein Ausschlusskriterium, weswegen der Sensor nicht berücksichtigt werden kann.
+  \item[Lasersensor] Die Auswertung für diesen Sensor ist in \vref{appendix:fig:laserSensorAuswertung} zu sehen. Die Genauigkeit dieses Sensors war ausreichend für diese Anwendung, weswegen die Entscheidung auf diesen Sensor fiel.
+\end{description}
+
+Als Kamera wird vorerst aus Kostengründen eine bereits vorhandene Webcam, eine Microsoft Lifecam Studio, verwendet. Diese ist mit einer Auflösung von 1080p für die ersten Tests ausreichend. Als Ersatzlösung steht der KEYENCE SR-X100 AI-Codeleser zur Verfügung, der allerdings mit über \SI{1500}{€} für dieses Konzept zu teuer ist. Anzumerken ist dennoch, dass die Umsetzung des Projekts selbst mit der Beschaffung eines solchen Codelesers deutlich günstiger als das Angebot der Firma Löther ist.
+
+
+\subsection{Analyse des Standorts}\label{ssec:analyse:standort}
+
+Die Pakete sollen am Versandband ausgemessen werden. Da das Projekt auch an anderen Standorten umgesetzt werden soll, müssen einige Punkte beachtet werden:
+
+\begin{itemize}
+  \item Für den Aufbau des Sensorträgers muss entsprechend Platz sein.
+  \item Die Anschlüsse für Strom und Netzwerk müssen gut erreichbar sein.
+  \item Das Vermessen soll nach dem Anbringen des Versandlabels erfolgen.
+  \item Die Förderstrecke soll möglichst gerade verlaufen.
+\end{itemize}
+
+Eine grobe Skizze des entsprechenden Abschnitts der Versandanlage in Kesselsdorf der als Aufbauort nach Rücksprache mit dem Teamleiter der IT, der Haustechnik und dem Schichtleiter der Versandanlage festgelegt wurde, ist in \vref{appendix:fig:skizzeVersand} zu sehen. Auf dieser Skizze ist erkennbar, dass es nur einen kleinen Bereich gibt, hier in grün markiert, der als Standort für den Sensorträger in Frage kommt.

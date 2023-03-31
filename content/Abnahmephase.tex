@@ -1,0 +1,11 @@
+\section{Abnahme- und Einführungsphase}
+
+\subsection{Code-Review}
+
+Während der Erstellung des Projekts wurde immer wieder Rücksprache mit anderen Programmierern des Unternehmens gehalten sowie deren Meinung und Verbesserungsvorschläge eingeholt. Jeder Service wurde nach Fertigstellung gemeinsam mit einem erfahrenen Anwendungsentwickler auf Fehler oder Verbesserungen überprüft. So wurde der Datenspeicherservice ursprünglich als zwei Services geplant. Durch die große Ähnlichkeit beider wurde aber durch den Review-Prozess  entschieden, diese Services als eine Anwendung umzusetzen. Beide Services beziehen ihre Verbindungsdaten zu den \textit{\gls{RabbitMQ}}-Exchanges und ihren damit verbundenen Namen aus den Umgebungsvariablen, die durch die docker-compose-Dateien gesetzt werden. Deployed werden beide Services dann automatisch durch eine \ac{CI/CD}-Pipeline, die für die Ausführung verantwortliche Datei ist in \vref{appendix:lst:gitlab-ci} zu sehen. Dadurch können zwei Services aus einer Anwendung heraus gestartet werden. Zudem wurden durch den Review-Prozess die Berechnungen der Länge, Breite und Höhe, zuvor noch als eine Methode, in einzelne Methoden aufgegliedert, um die Übersichtlichkeit zu erhöhen. Kurz vor der Inbetriebnahme fiel noch auf, dass das aufzuzeichnende Kamerabild nicht als byte-array in ein JSON-Objekt eingefügt werden kann, da das Hinzufügen von byte-arrays zu JSON-Objekten unzulässig ist. Deshalb wurde hier das byte-array zu einem UTF8-String umgewandelt.
+
+
+\subsection{Inbetriebnahme und Abnahme}
+
+Die Inbetriebnahme erfolgte am 26.10.2022 mit der Montage des Sensorträgers am Rollenförderband. Zuvor wurden der Datenspeicherservice sowie der Datenverarbeitungsservice auf dem \textit{\gls{Docker Swarm}} deployed, sowie der Windowsrechner mit der Datenauslesesoftware und der Arduino mit der Sensorauslesesoftware ausgestattet. Nach einigen Feinjustierungen der seitlichen Sensoren bzgl. der Höhe und dem Ausrichten der Kamera konnten die ersten Daten empfangen werden. Nach dem Sammeln von Daten eines Tages wurde das Projekt vom Teamleiter der IT abgenommen. Dies erfolgte durch die Vorstellung aller Komponenten, der Begutachtung des Sensorträgers sowie der Betrachtung der bereits gesammelten Daten. Anschließend wurde über mögliche Verbesserungen sowie das weitere Vorgehen bzgl. der Verarbeitung der Daten gesprochen.
+

@@ -1,0 +1,22 @@
+\section{Entwurf}\label{sec:Entwurf}
+
+
+\subsection{Zielplattform}
+
+Das Projekt besteht aus vier \textit{\gls{Microservices}}, welche in den Programmiersprachen C, C\# und Python umgesetzt wurden. Für die Datenspeicherung wird eine MSSQL-Datenbank eingesetzt, da die gut strukturierten und gleichbleibenden Daten sehr gut zu einer relationalen Datenbank passen. Bereitgestellt wird die Datenbank von einem Windowsserver. Das Auslesen der Daten findet auf einem Einplatinencomputer statt, der die Sensordaten über die Serial-Schnittstelle an einen Windowsrechner überträgt. Auf diesem Windowsrechner analysiert ein Python-Programm die Daten und verknüpft sie mit einem Kamerabild. Die Speicherung der Daten erfolgt mit einer unter Verwendung von .NET 6.0 erstellten Konsolen-Anwendung. Die Berechnung der Paketgröße und das Erkennen des Pakets und der Sendungsnummer erfolgt mit einem Python-Programm und mit den populären Programmbibliotheken \textit{\gls{OpenCV}} und \textit{\gls{YOLOv7}}. Die Kommunikation zwischen den Services erfolgt über \textit{\gls{RabbitMQ}}. Die Konsolen-Anwendung, die Berechnung der Paketgröße und Erkennung des Pakets sowie \textit{\gls{RabbitMQ}} werden auf einem \textit{\gls{Docker Swarm}} bereit gestellt. Diese sind auch über die interne GitLab \ac{CI/CD}-Pipeline angebunden, was das Pflegen und Deployment der Dienste automatisiert und vereinfacht.
+
+\subsection{Datenmodell}
+
+Die drei Datenbankmodelle sind sehr einfach, da relativ wenig Daten gespeichert werden und eine geringe Abhängigkeit vorhanden ist. Das Tabellenmodell der Tabellen ist in \vref{appendix:fig:erm} zu sehen.
+
+
+\subsection{Architekturdesign}
+
+Als Anwendungsarchitektur wurde die \textit{\gls{Microservices-Architektur}} gewählt. Anstatt die Software als \textit{\gls{Monolith}} aufzubauen, wird bei einer \textit{\gls{Microservices-Architektur}} der modulare Ansatz verfolgt. Dadurch können die einzelnen \textit{\gls{Microservices}} unabhängig voneinander deployed, gewartet und verwaltet werden. Von der losen Kopplung, dem separaten Deployment und der hohe Skalierbarkeit kann vor allem die ressourcenintensive Bilderkennung profitieren. In \vref{appendix:fig:datenFlussDiagramm} ist die Architektur als Skizze zu sehen. Die Kommunikation der Services untereinander erfolgt über \textit{\gls{RabbitMQ}}, ein Open Source Message Broker, der das \ac{AMQP} implementiert.
+
+
+\subsection{Entwurf des Sensorträgers}
+
+Die Kamera, die drei Lasersensoren, der Arduino sowie der Windowsrechner sollen am Rollenförderband an einem Träger montiert werden. Dazu wurde nach der Analyse der benötigten Hardware und des Standorts, in \vref{ssec:analyse:hardware} und \vref{ssec:analyse:standort} beschrieben, unter Rücksprache mit dem Schichtleiter des Versands und einem Techniker der Haustechnik ein Entwurf für einen Sensorträger erstellt. Der 2D-Entwurf ist in \vref{appendix:pdf:sensor_traeger_skizze}, der 3D-Entwurf ist in \vref{appendix:fig:sensor_traeger_3d} zu sehen. Die seitlichen Sensoren sind nur wenige Zentimeter über dem Rollenförderband angebracht, sodass auch sehr niedrige Pakete erfasst werden können. Der Höhen-Sensor ist mittig angebracht, da der Sensorträger kurz nach der Maschine für das Anbringen des Versandlabels montiert werden soll, welche die Pakete auf dem Förderband zentriert. Die Kamera sitzt ebenfalls mittig, um ein Paket in voller Größe aufnehmen zu können.
+
+Die Sensoren selbst haben Aufnahmen für M2-Stellschrauben als Befestigungsoption. Um etwas mehr Schutz vor Stoßschäden und eine bessere Option der Befestigung zu haben, wurden die Sensorhalterungen 3D gedruckt. Dazu wurde eine Vorlage von Thingiverse \autocite{thingiverse} verwendet. Die Vorlage und das zusammengesetzte Endprodukt ist in \vref{appendix:fig:thingiverse} zu sehen.

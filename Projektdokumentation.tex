@@ -1,0 +1,497 @@
+\documentclass[
+  a4paper,
+  11pt,
+  headings=small,
+  ngerman,
+  listof=totoc,
+  numbers=noenddot,
+  parskip=half,
+  toc=flat
+  ]{scrartcl}[2021/11/13]
+\usepackage{ifxetex,ifluatex}
+\ifcase \ifxetex 1\else\ifluatex 1\else 0\fi\fi\usepackage[utf8]{inputenc}\fi
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\onehalfspacing % Zeilenabstand 1,5 Zeilen
+\frenchspacing % erzeugt ein wenig mehr Platz hinter einem Punkt
+\usepackage{lmodern}
+\usepackage{csquotes}
+
+\usepackage[automark,
+    headsepline=.4pt,
+    ilines
+    ]{scrlayer-scrpage}
+\clearmainofpairofpagestyles
+\pagestyle{scrheadings}
+% \renewcommand*{\sectionmarkformat}{%
+% 	\sectionname~\thesection\autodot\enskip}
+\ihead{\headmark}
+\ohead{\includegraphics[width=0.2\textwidth]{./pics/FA_Logo-WM_M_P_1C.pdf}}
+\setkomafont{pageheadfoot}{}
+\renewcommand*{\sectionmarkformat}{}
+\cfoot{\pagemark}
+\footskip1cm
+
+\setkomafont{section}{\Large} % Setzt section Schriftgröße auf Large
+
+\usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=2.5cm]{geometry}
+
+% Schusterjungen und Hurenkinder vermeiden
+\clubpenalty = 10000
+\widowpenalty = 10000
+\displaywidowpenalty = 10000
+
+\usepackage{xcolor, soul}
+\definecolor{codebackground}{rgb}{0.95, 0.95, 0.92}
+\definecolor{Black}{rgb}{0, 0, 0}
+\definecolor{sqlpurple}{RGB}{201, 53, 84}
+\definecolor{bashred}{RGB}{178, 34, 34}
+\definecolor{cicdlila}{RGB}{135, 103, 218}
+
+%%% Für Abkürzungen und Abkürzungsverzeichnis %%%
+\usepackage[printonlyused,withpage]{acronym}
+
+%%% Für Quotes %%%
+\usepackage[hyphens]{url}
+\usepackage[ngerman]{varioref}
+\usepackage{mwe}
+\usepackage{hyperref}% Weil es so in der Frage enthalten war.
+ \hypersetup{%draft, 								% no hyperlinking at all (useful in b/w printouts)
+    colorlinks=true, 
+    % breaklinks=true,
+    urlcolor=Black, 
+    linkcolor=Black, 
+    citecolor=Black,
+    linktoc=all, %
+    bookmarksnumbered, 
+    bookmarksopenlevel=1, 
+    bookmarksdepth = section,%
+    pdfstartview=FitV,
+    }
+\setlength{\parindent}{0em}
+
+%%% Fuer Glossar
+\usepackage[toc]{glossaries}
+
+\usepackage{bookmark}% Weil das hyperref deutlich verbesser.
+\usepackage{cleveref}
+\crefname{paragraph}{Abschnitt}{Abschnitt}
+\crefname{lstlisting}{Listing}{Listings}
+
+\makeglossaries
+% \renewcommand*{\glossarysection}[1][]{\section{#1}}
+
+%%% Für Textübergreifende Numerierung %%%
+\usepackage{enumitem}
+\renewcommand{\labelenumi}{\alph{enumi})}
+
+%%% Um PDFs einzubinden %%%
+\usepackage{pdfpages}
+
+%%% Um Zahlen mit Einheiten korrekt darstellen %%%
+\usepackage{siunitx}
+\sisetup{
+  locale = DE ,
+  detect-all
+}
+
+\DeclareSIUnit{\sieuro}{\mbox{\euro}}
+
+%%% Code schoen darstellen %%%
+\usepackage{listings}
+\usepackage{listingsutf8}
+
+\lstdefinestyle{MyPythonStyle}{
+  frame=tb, % hrule above and below
+  keepspaces=true,
+  breaklines=true,
+  columns=flexible,
+  basicstyle=\texttt\scriptsize,
+  escapeinside={(*@}{@*)}, % for escaping
+  backgroundcolor=\color{codebackground},
+  showstringspaces=false,
+  language=Python,
+  keywordstyle=\color{blue},
+  stringstyle=\color{red},
+  commentstyle=\color{teal},
+  numbers=left, % {none, left, right}
+  firstnumber=1,
+  numberstyle=\scriptsize\color{black},
+  numbersep=5pt,
+  xleftmargin=5.0ex,
+  gobble=-4
+}
+
+\lstdefinelanguage{docker}{
+  frame=tb, % hrule above and below
+  keepspaces=true,
+  breaklines=true,
+  columns=flexible,
+  basicstyle=\texttt\scriptsize,
+  keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+  keywordstyle=\color{blue}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]",
+  numbers=left, % {none, left, right}
+  firstnumber=1,
+  numberstyle=\scriptsize\color{black},
+  numbersep=5pt,
+  xleftmargin=5.0ex,
+  gobble=0
+}
+
+\lstdefinelanguage{docker-compose}{
+  frame=tb, % hrule above and below
+  keepspaces=true,
+  breaklines=true,
+  columns=flexible,
+  basicstyle=\texttt\scriptsize,
+  keywords={version, volumes, services},
+  keywordstyle=\color{blue}\bfseries,
+  keywords=[2]{image, environment, ports, container_name, ports, links, build},
+  keywordstyle=[2]\color{olive}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]",
+  numbers=left, % {none, left, right}
+  firstnumber=1,
+  numberstyle=\scriptsize\color{black},
+  numbersep=5pt,
+  xleftmargin=5.0ex,
+  gobble=0
+}
+
+\lstdefinelanguage{gitlab-ci-cd}{
+  backgroundcolor=\color{codebackground},
+  basicstyle=\texttt\tiny,
+  breaklines=true,
+  columns=flexible,
+  commentstyle=\color{teal},
+  escapeinside={(*@}{@*)}, % for escaping
+  firstnumber=1,
+  frame=tb, % hrule above and below
+  gobble=-4,
+  keepspaces=true,
+  keywords={image, stages, before_script, build-prod, stage, tags, script, only, refs, deploy-prod-raw, deploy-prod-processed},
+  keywordstyle=\color{cicdlila}\bfseries,
+  numbers=left, % {none, left, right}
+  numbersep=5pt,
+  numberstyle=\scriptsize\color{black},
+  showstringspaces=false,
+  stringstyle=\color{sqlpurple},
+  xleftmargin=5.0ex
+}
+
+\lstloadlanguages{SQL}
+\lstdefinestyle{sql-style}{
+  backgroundcolor=\color{codebackground},
+  basicstyle=\texttt\tiny,
+  breaklines=true,
+  columns=flexible,
+  commentstyle=\color{teal},
+  escapeinside={(*@}{@*)}, % for escaping
+  firstnumber=1,
+  frame=tb, % hrule above and below
+  gobble=-4,
+  keepspaces=true,
+  keywordstyle=\color{sqlpurple},
+  language=SQL,
+  morekeywords={datetime, nvarchar, REFERENCES, uniqueidentifier, varbinary},
+  numbers=left, % {none, left, right}
+  numbersep=5pt,
+  numberstyle=\scriptsize\color{black},
+  showstringspaces=false,
+  stringstyle=\color{sqlpurple},
+  xleftmargin=5.0ex
+}
+
+\lstloadlanguages{Bash}
+\lstdefinestyle{bash-style}{
+  backgroundcolor=\color{codebackground},
+  basicstyle=\texttt\tiny,
+  belowcaptionskip=-8pt,
+  breaklines=true,
+  columns=flexible,
+  commentstyle=\color{teal},
+  escapeinside={(*@}{@*)}, % for escaping
+  firstnumber=1,
+  frame=tb, % hrule above and below
+  gobble=-4,
+  keepspaces=true,
+  keywordstyle=\color{bashred},
+  language=Bash,
+  numbers=left, % {none, left, right}
+  numbersep=5pt,
+  numberstyle=\scriptsize\color{black},
+  showstringspaces=false,
+  stringstyle=\color{bashred},
+  xleftmargin=5.0ex
+}
+
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue},
+  inputencoding=utf8,
+  extendedchars=true
+}
+
+%%% Korrekte darstellung fuer Sonderzeichen im Code
+\lstset{literate=%
+    {Ö}{{\"O}}1
+    {Ä}{{\"A}}1
+    {Ü}{{\"U}}1
+    {ß}{{\ss}}1
+    {ü}{{\"u}}1
+    {ä}{{\"a}}1
+    {ö}{{\"o}}1
+    {~}{{\textasciitilde}}1
+}
+
+%%% Fuer das Springen zum Bild und nicht zur Caption
+\usepackage{caption}
+
+%%% Tabellen, die ueber mehr als eine Seite gehen sollen
+\usepackage{tabularray}
+\DefTblrTemplate { contfoot-text } { normal } { Fortsetzung auf nächster Seite }
+\SetTblrTemplate { contfoot-text } { normal }
+\DefTblrTemplate { conthead-text } { normal } { (Fortsetzung) }
+\SetTblrTemplate { conthead-text } { normal }
+
+%%% Alles bzgl. des Literaturverzeichnisses
+\usepackage[bibencoding=utf8,
+			sortlocale=de,
+			style=numeric,
+			pagetracker=true,
+			autocite=inline,
+			backrefstyle=three+,
+			date=short,
+			sorting=nty,
+			backend=biber]{biblatex}
+\bibliography{Literaturverzeichnis}
+
+%%% urldate in eckigen Klammern %%%
+\DeclareFieldFormat{urldate}{\mkbibbrackets{#1}}
+%%% URL: = Verfügbar unter: %%%
+\DeclareFieldFormat{url}{{Verfügbar unter:}\space\url{#1}}
+%%% Abstand zwischen den Literaturangaben %%%
+\setlength{\bibitemsep}{1.3em}
+%%% statt und ein & %%%
+\renewcommand*{\finalnamedelim}{\space\&\space}
+%%% Nachname, Vorname, immer %%%
+\DeclareNameAlias{sortname}{last-first}
+
+
+% Counter fuer roemische Seitenzahlen
+\newcounter{oldPageNumber}
+
+\begin{document}
+
+\pagenumbering{gobble}
+\pagestyle{empty}
+
+
+\begin{center}
+  {\Large Abschlussprüfung Winter 2022}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  {\Large Fachinformatiker für Anwendungsentwicklung} \\
+  \vspace{0.3cm}
+  {\LARGE Dokumentation zur betrieblichen Projektarbeit}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  % PaketMessungsAnwendung
+  {\huge \textbf{Entwicklung von PaMesAn}}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  {\Large \textbf{Implementierung eines neuen Systems zur Erfassung von Versandverpackungen mit Hilfe von Bild- und Sensordaten zur Erfüllung der Novelle des Verpackungsgesetzes}}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\begin{center}
+  {\large Abgabetermin: Dresden, den 14.11.2022}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\begin{center}
+  \textbf{\large{Prüfungsbewerber}} \\
+  {\large Johannes Leyrer} \\
+  {\large <somewhere>} \\
+  {\large <somewhere>}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\begin{center}
+  \textbf{\large{Ausbildungsbetrieb}} \\
+  {\large FLYERALARM Industrial Print GmbH} \\
+  {\large Zschoner Ring 9} \\
+  {\large 01723 Wilsdruff}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\vspace*{\fill}
+
+{\small Dieses Werk einschließlich seiner Teile ist urheberrechtlich geschützt. Jede Verwertung außerhalb der engen Grenzen des Urheberrechtsgesetzes ist ohne Zustimmung des Autors unzulässig und strafbar. Das gilt insbesondere für Vervielfältigungen, Übersetzungen, Mikroverfilmungen sowie die Einspeicherung und Verarbeitung in elektronischen Systemen.}
+
+
+\newpage
+
+\includepdf[pages={3-5}]{./files/Projektantrag_original.pdf}
+\includepdf[pages={1-2}]{./files/Projektantrag_original.pdf}
+
+\newpage
+\pagestyle{scrheadings}
+\pagenumbering{Roman}
+
+\tableofcontents
+\setcounter{oldPageNumber}{\value{page}}
+
+\newpage
+
+\input{glossary/glossary}
+
+\newpage
+
+\pagenumbering{arabic}
+
+\input{content/Einleitung}
+\input{content/Projektplanung}
+\input{content/Analysephase}
+\input{content/Entwurfsphase}
+\input{content/Implementierungsphase}
+\input{content/Abnahmephase}
+\input{content/Dokumentation}
+\input{content/Fazit}
+% \input{content/EidesstattlicheErklaerung}
+
+\newpage
+
+\pagenumbering{Roman}
+\setcounter{page}{\value{oldPageNumber} + 1}
+
+%%% Literaturverzeichnis
+\printbibliography[heading=bibintoc]
+\newpage
+%%% Glossar
+\printglossary[title=Glossar]\label{sec:glossar}
+\newpage
+%%% Abkürzungsverzeichnis
+\newcommand{\abkvz}{Abkürzungsverzeichnis}
+\section*{\abkvz}\label{sec:abkuerzungsverzeichnis}
+\markboth{\abkvz}{\abkvz}
+\addcontentsline{toc}{section}{\abkvz}
+
+\input{acronym/acronym}
+
+\newpage
+%%% Abbildungsverzeichnis
+\listoffigures
+\newpage
+%%% Tabellenverzeichnis
+\listoftables
+\newpage
+%%% Codeverzeichnis
+\lstlistoflistings
+
+\setcounter{oldPageNumber}{\value{page}}
+\newpage
+
+% \pagenumbering{roman}
+\setcounter{page}{1}
+\renewcommand{\thepage}{A-\arabic{page}}
+
+\appendix
+\ihead{Anhang}
+
+\input{appendix/appendix}
+
+\newpage
+
+\pagenumbering{gobble}
+\pagestyle{empty}
+
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  {\Large FLYERALARM Industrial Print GmbH} \\
+  \vspace{0.3cm}
+  {\LARGE Entwicklerdokumentation}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  % PaketMessungsAnwendung
+  {\huge \textbf{Projekt PaMesAn}}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+\begin{center}
+  {\Large \textbf{System zur Erfassung von Versandverpackungen mit Hilfe von Bild- und Sensordaten zur Erfüllung der Novelle des Verpackungsgesetzes}}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\begin{center}
+  \textbf{\large{Ersteller}} \\
+  {\large Johannes Leyrer} \\
+  {\large IT -- Kesselsdorf}
+\end{center}
+\begin{verbatim}
+
+\end{verbatim}
+
+\vspace*{\fill}
+
+\textbf{Historie:}
+
+\begin{addmargin}{1cm}
+  \textbf{2022.10.31:} Erstellung
+\end{addmargin}
+
+\newpage
+
+%%% Anwenderdokumentation
+\pagestyle{scrheadings}
+% \pagenumbering{arabic}
+\setcounter{page}{1}
+\renewcommand{\thepage}{B-\arabic{page}}
+\ihead{Entwicklerdokumentation}
+\input{user-documentation/docu}
+
+\end{document}
+
+% minimize pdf-size
+% gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dNOPAUSE -dQUIET -dBATCH -dPrinted=false -sOutputFile=compressed.pdf Projektdokumentation.pdf
+% gswin64c -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 -dNOPAUSE -dQUIET -dBATCH -dPrinted=false -sOutputFile=compressed.pdf Projektdokumentation.pdf

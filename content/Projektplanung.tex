@@ -1,0 +1,39 @@
+\section{Projektplanung}
+
+
+\subsection{Projektphasen}
+
+Für das Projekt stehen 80 Arbeitsstunden zur Verfügung. Diese werden auf verschiedene Projektphasen verteilt, zu sehen in \vref{tab:zeitplanungGrob}. Eine detaillierte Zeitplanung ist im Anhang \vref{appendix:tab:zeitplanungFein} zu finden.
+
+\begin{table}[htbp]
+  \centering
+  \renewcommand{\arraystretch}{1.25}
+  \caption{Grobe Zeitplanung}
+  \begin{tabular}{lr}
+    Projektphase    & Geplante Zeit in Stunden \\
+    Analyse         & 10                       \\
+    Entwurf         & 8                        \\
+    Implementierung & 39                       \\
+    Test            & 5                        \\
+    Einführung      & 6                        \\
+    Dokumentation   & 12                       \\
+  \end{tabular}
+  \label{tab:zeitplanungGrob}
+\end{table}
+
+
+\subsection{Abweichungen vom Projektantrag}
+
+Im Projektantrag wurde im Unterpunkt \enquote{Projektdurchführung} von einem Python Sensor- und Bilderfassungs-/-verarbeitungsprogramm und einer ASP .NET Core 6.0 Web API ausgegangen. Ersteres sollte die Sensor- und Bilddaten erfassen, die Abmessungen berechnen und Details aus dem Bild erkennen. Diese ausgelesenen und interpretierten Daten sollten dann von der Web API entgegengenommen und abgespeichert werden. Kurz vor Projektstart wurde realisiert, dass eine \textit{\gls{Microservices-Architektur}} für dieses Projekt besser geeignet ist. So wird der Flaschenhals der Bilderkennung am Förderband selbst beseitigt  und die ressourcenintensive Bilderkennung kann je nach Anforderung und Last auf mehrere Services und somit mehrere Docker-Container verteilt werden. Der neue Aufbau ist in \vref{sec:Entwurf} zu finden.
+
+
+
+\subsection{Ressourcenplanung}
+
+Die bereits vorhandene verwendete Hard- und Software kann dem Anhang \vref{appendix:tab:ressourcen} entnommen werden. Auf die zusätzlich bezogene Hardware wird in \vref{ssec:analyse:hardware} eingegangen.
+
+
+\subsection{Entwicklungsprozess}
+
+Im Projekt wird nach Scrum gearbeitet, einem agilen Entwicklungsprozess, welcher den Standardprozess innerhalb des IT-Teams von \ac{FA} darstellt. So kann auf die sich ändernden Anforderungen eingegangen werden, die sich durch eine kontinuierliche Rücksprache mit Teamleiter, Schichtleiter der Versandanlage und der Haustechniker oder durch die verwendete Hardware und deren Aufbau ergeben. Ein Beispiel des Epics ist in \vref{appendix:fig:ticket} zu sehen.
+
