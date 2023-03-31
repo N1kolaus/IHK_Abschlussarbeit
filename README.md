@@ -1,17 +1,17 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-<h3 align="center">Vorlage Abschlussarbeit</h3>
+<h3 align="center">Meine IHK-Abschlussarbeit</h3>
 
   <p align="center">
-    Kleine, nicht perfekte Vorlage fuer die IHK Abschlussarbeit
+    Kann als nicht perfekte Vorlage fuer die IHK Abschlussarbeit verwendet werden.
     <br />
-    <a href="https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit"><strong>Home »</strong></a>
+    <a href="https://github.com/FMinister/IHK_Abschlussarbeit"><strong>Home »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit/issues">Report Bug</a>
+    <a href="https://github.com/FMinister/IHK_Abschlussarbeit/issues">Report Bug</a>
     ·
-    <a href="https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit/issues">Request Feature</a>
+    <a href="https://github.com/FMinister/IHK_Abschlussarbeit/issues">Request Feature</a>
   </p>
 </div>
 
@@ -44,7 +44,7 @@
 
 ## About The Project
 
-Dies ist eine kleine LaTeX-Vorlage für das IHK-Abschlussprojekt.
+Hier meine Abschlussarbeit, die auch als LaTeX-Vorlage für das IHK-Abschlussprojekt verwendet werden kann.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -70,7 +70,23 @@ TeX Live und ein Editor eurer Wahl muss installiert sein.
 
 -   Clone the repo
     ```sh
-    git clone https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit.git
+    git clone https://github.com/FMinister/IHK_Abschlussarbeit.git
+    ```
+
+-   Add this to your settings.json in VS Code
+    ```json
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "pdflatex, makeglossaries, pdflatex (2x)",
+            "tools": [
+                "pdflatex",
+                "makeglossaries",
+                "biber",
+                "pdflatex",
+                "pdflatex"
+            ]
+        },
+    ],
     ```
 
 Happy Hacking.
@@ -81,7 +97,7 @@ Happy Hacking.
 
 ## Usage
 
-Wenn ihr die Vorlage bearbeiten wollt, dann bitte nur Änderungen einfügen, die allgemein praktisch sind. Für eure eigene Arbeit kopiert euch bitte das Repo und nutzt ein eigenes Repo als Versionskontrolle.
+Wenn ihr Anmerkungen zu dieser Vorlage habt, bitte per Merge Request oder Nachricht. Für eure eigene Arbeit kopiert euch bitte das Repo und nutzt ein eigenes Repo als Versionskontrolle.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -116,9 +132,9 @@ Vergiss bitte nicht, dem Projekt einen Stern zu geben! Nochmals vielen Dank!
 
 ## Contact
 
-Johannes Leyrer - i20leyrerjo@bszetdd.lernsax.de
+Discord (FMinister #7212)
 
-Project Link: [https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit](https://github.com/FMinister/LaTeX_Vorlage_IHK_Abschlussarbeit)
+Project Link: [https://github.com/FMinister/IHK_Abschlussarbeit](https://github.com/FMinister/IHK_Abschlussarbeit)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
